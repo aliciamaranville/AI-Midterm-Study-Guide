@@ -1,0 +1,312 @@
+\documentclass{report}
+
+\input{preamble}
+\input{macros}
+\input{letterfonts}
+\input{config}
+
+\pgfplotsset{compat=1.18}
+\renewcommand{\gitinfonote}{}
+\begin{document}
+
+\include{title}
+
+\newpage
+
+\newpage
+%%══════════════════════════════════════════════════════════════════════
+%%  TABLE OF CONTENTS
+%%══════════════════════════════════════════════════════════════════════
+\titleformat{name=\chapter,numberless}[display]
+{\normalfont\Huge\bfseries}{}{0pt}{\Huge}
+{\hypersetup{linkcolor=mytoccolor}
+	\tableofcontents
+}
+\clearpage
+\pagestyle{fancy}
+
+% Insert with \input{study-guide-content} after the original template's TOC.
+% Uses the supplied preamble and macros; no extra packages.
+% Compact spacing retains the original chapter design.
+\titlespacing*{\chapter}{0pt}{-25pt}{14pt}
+\providecommand{\assignment}[1]{\par\noindent\textbf{Connection to your assignment.} #1}
+
+\chapter{AI and Intelligent Agents}
+\section{Foundations and Governance}
+\dfn[short-ai]{AI and agents}{AI systems perceive, reason, and act. An \textbf{agent} selects actions to achieve a performance measure in an environment. This course emphasizes \textbf{acting rationally}, which means choosing the best expected outcome.}
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+Approach & Focus\\\midrule
+Thinking humanly & Modeling human cognition and consciousness\\
+Acting humanly & Assessed by the Turing Test\\
+Thinking rationally & Draw conclusions using logic\\
+Acting rationally & Maximize expected performance/utility\\\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{AI governance:} policies, oversight, and operational standards. \emph{Accountability} assigns responsibility for failures, \emph{transparency} supports understanding of the decision-making process, \emph{fairness} addresses discrimination, and \emph{privacy/security} protects data.
+
+\textbf{Alignment} means specifying the intended objective. \textbf{Reward hacking} achieves the metric without the intended result. \textbf{Instrumental convergence} concerns different objectives producing similar useful subgoals, which may conflict with human needs; it is not numerical convergence.
+
+\section{Intelligent agents}
+
+\dfn[agent]{Agent}{A more specific definition is agent is anything that perceives its environment through sensors and acts upon that environment through actuators.}
+
+\dfn[short-function]{Agent function vs. program}{A \textbf{percept} is current sensor input; a \textbf{percept sequence} is its history. The function $f:P^*\to A$ maps percept sequences to actions. The agent \textbf{program} receives the current percept and uses stored memory (if using) to concretely implement the function.}
+
+We want good behavior from our agents, defined by rationality. A rational agent maximizes expected performance given percept history and knowledge. It is neither omniscience nor guaranteed success (e.g., a rational poker player loses). \emph{Bounded rationality} recognizes memory and computational limits to rationality.
+
+\dfn[short-peas]{PEAS}{\textbf{Performance, Environment, Actuators, Sensors} specify success and available interaction.}
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+ & Vacuum & Internet book shopping\\\midrule
+P & Completion; energy used & Price, condition, seller reliability\\
+E & Room, dirt, walls & Listings, sellers, shipping\\
+A & Ability to move; Ability to suck & Search; add to cart; purchase\\
+S & Dirt and bumper sensors & Listing text, prices, ratings\\\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Environments and Agent Types}
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+Property & Distinction \\\midrule
+Observability & Full: sensors give agent full access to state of environment. Partial: memory or beliefs may be needed.\\
+Deterministic & The environment follows fixed rules. Stochastic: several outcomes are possible for the same action.\\
+Known & The agent knows the environment's rules (transition model); unknown rules require learning/exploration.\\
+Static & Unchanged while agent deliberates; dynamic worlds may require replanning.\\
+Discrete & Fixed number of distinct values/actions; continuous spaces may need discretization.\\
+Episodic & Independent episodes; sequential environment mean actions affect long-term outcomes.\\
+Single-/multi-agent & Other decision makers introduce cooperation (driving) or competition (chess).\\\bottomrule
+\end{tabularx}
+\end{center}
+\nt{Known relates to the the \textit{rules}, and observable relates to the current \textit{state}. Random initialization or randomized actions do not imply stochastic transitions.}
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+Agent type & How the agent makes decisions \\\midrule
+Simple reflex & Current-percept rules, fast, no memory.\\
+Model-based reflex & Update internal state from history/model, then apply rules.\\
+Goal-based & Choose actions or plan to reach a goal.\\
+Utility-based & Compare outcome desirability using expectation under uncertainty.\\
+Learning & Improve knowledge/behavior through experience; compatible with other types.\\\bottomrule
+\end{tabularx}
+\end{center}
+
+\assignment{The vacuum receives bumpers/local dirt, not the simulator's whole array. In the model-based agent, we use memory to ensure we cover the whole room. Compare to the simple reflex agent, who simply chooses an available action based on a set of rules and the current sensors.}
+
+\section{States and transitions}
+\dfn[short-state]{State and representation}{The state represents all that agents know about the environment. It can be \textbf{atomic} with just a single label for a state, or \textbf{factor} where a state is represented by a set of attributes (called fluents).}
+
+The set of all possible states is called the \textbf{state space} $\mathcal S$. We can estimate the size of the state space (which is important to know to determine the complexity of search algorithms) using combinatorics. 
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+Environment & State space size \\\midrule
+Maze with $x$ rows and $y$ columns & $n \leq |x|\times|y|$\\
+Vacuum: $L$ positions & $L2^L$ as the robot can be in $L$ positions and each position can be clean or dirty\\
+4-queens problem  & $\binom{16}{4}=1820$ since we choose 4 our of 16 squares to have queens.\\
+Tic-tax-toe & $n<3^9$ as each place can be blank, 'x', or 'o' but many board are illegal\\\bottomrule
+\end{tabularx}
+\end{center}
+
+\dfn[tf]{Transition function}{A model of how the environnment changes when actions are performed. $s'=T(s,a)$. Defines how we move among states with actions.}
+
+A \textbf{search problem} specifies initial state $s_0$, legal actions $A(s)$, transition $T(s,a)$, goal test, and step cost $c(s,a,s')$. \textbf{Path cost} sums step costs.
+
+\assignment{Maze states are positions where S starts, G terminates, and adjacent moves cost one. We use (row,col) and add (push) at the teleportation state with a teleporter (e.g., $T((10,1),\mathrm{push})=(5,8)$). Walls also determine legal actions.}
+
+\chapter{Search Problems}
+
+Search problems consider designing goal-based agents in known, fully observable, deterministic environments (like a maze). A \textbf{search problem} is defined as an initial state $s_0$, possible actions $A(s)$, transition model $T(s,a)$, goal state $s_t$, and path cost (the sum of step costs). We want to \emph{search or plan} for the sequence of actions that reaches the goal state and then \emph{execute} that solution.  One way to plan is with tree search.
+
+A tree contains many parts:
+\begin{itemize}
+    \item Root node: Initial state (\emph{Note that each node represents a state})
+    \item Edge: Action
+    \item Path: Sequence of actions
+    \item Solution: Path ending in a node representing the goal state
+    \item Cycles: Trees cannot have cycles, so we must break those to prevent reexploring the same subtrees.
+    \item Frontier: Set of unexplored known nodes
+    \item Expansion: Apply all possible actions to a node and add its children (newly reached states) to the frontier
+\end{itemize}
+
+In AI tree/graph search, the search tree is too large to fit in memory so we build parts of it and manage memory. We must ensure cycle checking is done to avoid infinite loops.
+
+The order in which we expand the nodes on a tree is the \textbf{search strategy}, which are evaluated by $(i)$ completeness (does it find a solution if one exists?), $(ii)$ optimality (does it find the least-cost solution?), $(iii)$ time complexity (how long does it take?), $(iv)$ space complexity (how much memory is needed?).
+
+We discussed the state space size, but we need to determine the number of searched nodes in a search tree. This is done with the maximum branching factor $b$, maximal tree depth $m$, and the depth of the optimal solution $d$.
+
+\section{Uninformed Search}
+
+Uninformed search is not provided with information about closeness to the goal, so we blindly search until the goal state is reached. The two strategies are breadth-first search (BFS, uniform cost) and depth-first search (DFS, IDS)
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+Method & Expansion rule and guarantees & Time/space\\\midrule
+BFS & Expand using FIFO. Complete and optimal (if cost is same per step) & $O(b^d)$ / $O(b^d)$\\
+Uniform-cost & Expand node with the least path cost from the initial state. Complete and optimal. & $O(b^{1+C^*/\varepsilon})$ where path costs $c\leq C^*$\\
+DFS & Expand deepest unexpanded node. Complete with cycle checking, not optimal & $O(b^m)$ / $O(bm)$ (linear i.e. good!)\\
+IDS & Use DFS restricted by depth (good memory) and gradually increase depth (optimality). Complete and optimal (if step cost=1) & $O(b^d)$ / $O(bd)$\\\bottomrule
+\end{tabularx}
+\end{center}
+
+A data structure holding references to all visited nodes is used to prevent visiting nodes more than once (cycles/redundant paths). In DFS, a global visited structure also sacrifices its linear-memory advantage.
+
+\section{Informed Search and Heuristics}
+
+Informed search uses additional information to find promising states to visit, making search more efficient. The agent uses a heuristic $h(n)$ to rank nodes in the frontier and to select the most promising.
+
+\textbf{$g(n)$}: cost paid; \textbf{$h(n)$}: estimated remaining cost; \textbf{$f(n)$}: frontier priority. Select among the whole frontier
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+\toprule
+Method & Priority & Tradeoff\\\midrule
+Greedy & Always expand node with lowest estimated cost to goal & High space complexity \\
+A* & Expand $n$ with smallest cost to goal and cost to reach $n$ & High space complexity \\
+Weighted A* & Weigh heuristic more than cost to reach $n$ & May be faster, loses A* optimality guarantee \\\bottomrule
+\end{tabularx}
+\end{center}
+\dfn[short-heuristic]{Admissibility}{A heuristic is admissible if it never overestimates the true cost to reach the goal state from $n$, defined as $0\leq h(n)\leq h^*(n)$. }
+
+\thm[short-astar]{A* optimality}{If $h$ is admissible, A* is optimal as the admission heuristic forces A* to explore all possible shorter paths before reaching the goal. A* is optimally efficient since no other tree-based search algorithm, with the same heuristic, expands fewer nodes to find the solution.}
+
+Examples of admissible heuristics include the Manhattan and Euclidean distance from states to the goal state. \emph{Note that with a teleporter, these heuristics must be modified as they will overestimate the true cost}. Overall, we receive good space complexity from DFS/IDS with cycle checking and optimality from BFS at the cost of space complexity. A* is also optimal with a good heuristic and expanded fewer nodes than BFS. 
+
+\chapter{Local Search}
+
+Uninformed and informed search algorithms come with more completeness and/or optimality guarantees but need lots of time/memory. We use \emph{local search} to calculate utility for states and improve the solution iteratively until we reach the maximum objective function. This does not need a tree.
+
+\section{Configurations and Local Optima}
+\dfn[short-local]{Local search}{To define a local search problem, we need the state space, state representation, objective function (replaces the goal state), and a local neighborhood (replaces the transition function).}
+
+\assignment{In the n-queens problem, we have: a state space of all possible configurations, a state representation of the row position of each queen (e.g., 2, 3, 2, 3), an objective to minimize the number of pairwise conflicts, and a local neighborhood of moving one queen in its own column.}
+
+To determine how to perform moves to reach the optimal solution, we can try using greedy local search (or hill-climbing search), which has three variants:
+
+\textbf{Hill climbing}: take improving moves. \textbf{Steepest ascent} evaluates all neighbors and chooses the best. \textbf{Stochastic hill climbing} chooses randomly from all improvements. \textbf{First-choice} generates a new successor at a time until a better one is found.
+
+Hill-climbing can get stuck in  local optima, where no neighbor has improvement but there are better states elsewhere. Restarting hill-climbing with random initial states can help (random-restart hill climbing) Hill climbing is generally neither complete nor globally optimal.
+
+\section{Annealing and Evolutionary Methods}
+
+We use simulated annealing and evolutionary methods to escape local minima.
+
+\textbf{Simulated annealing} uses first choice stochastic hill climbing and allows some bad moves (gradually decreasing in frequency). For the first step, we want a high probability that an average move will be accepted. As time goes on, the likeliness that a bad move is accepted should decrease: the rate at which it decreases is called the 'cooling schedule'. Examples include $T_t=T_0\alpha^t, 0.8<\alpha<1$. If the temperature decreases slowly enough, the probability of reaching a global optimum approaches one.
+
+\textbf{Genetic algorithms}: Uses genetic mechanisms: reproduction (random select with probability), crossover (random recombination), mutation (exploration), repeated.
+
+\chapter{Search with Uncertainty}
+
+Now, we consider environments that may not be fully observable or stochastic environments. For these, the agents must keep track of all states it \emph{could} be in (belief state), and it needs to come up with a \emph{conditional plan/policy} that depends on percepts. We consider different sources of uncertainty below.
+
+\textbf{Nondeterministic actions}: $\mathrm{Results}(s,a)\subseteq S$ lists possibilities of states that agent could end up in. We can handle this with AND-OR trees, where the goal is to find a subtree with one action for each OR node considering all outcomes of the AND nodes that has only goal leaf nodes.
+\begin{itemize}
+    \item OR node: Trying one action at a time
+    \item AND node: Consider all outcomes (check recursively)
+    \item Stop when the first complete subtree with only goal leaf nodes is found
+    \item From the above subtree, we can construct a conditional plan
+\end{itemize}
+
+This is recursively created via DFS. It is not optimal as it returns the first valid plan found.
+
+\assignment{Nondeterministic sucking in the vacuum world may clean adjacent dirt or add dirt on a clean square. We need to observe outcomes before deciding whether more cleaning is needed.}
+
+\section{Beliefs, Filtering, and Coercion}
+
+\textbf{Sensorless problems}: When agent has no sensors, we need to find a solution/plan that works reasonably well from any state. We then blindly execute it.
+
+\dfn[short-belief]{Belief state}{$B\subseteq S$ contains possible states. The size of the belief state space is $2^N$ where $N$ is the number of original states. However, only small amount of belief states are reachable. For guaranteed success, we need a reachable belief state containing only goal states.}
+
+We can coerce the world into known states by taking actions. We filter what could be the possible states after taking deterministic actions (e.g., we know that there are 2 squares and go left twice; then we know we are in the leftmost square without sensors). 
+
+\textbf{Partial observability}: Observations reveal only part of the state, but we can learn from them about the agent's state with the following steps:
+
+\begin{enumerate}
+    \item \textbf{Predict}: Choose action $a$ and compute new belief state: 
+    \[ \widehat b = \bigcup_{s\in b}\mathrm{Result(s,a)}. \]
+    \item \textbf{Update}: After observing $o$, only keep states consistent with $o$:
+    \[b_o=\{s: s\in\widehat b \land Percept(s)=o\},\]
+\end{enumerate}
+
+Thus, we repeatedly apply
+\[
+b=\mathrm{Update}(\mathrm{Predict}(b,a),o).
+\]
+
+\textbf{AND-OR search}: We search over belief states and create a conditional plan:
+\begin{itemize}
+    \item \textbf{OR} (Predict): Choose an action and predict the resulting belief.
+    \item \textbf{AND} (Update): Branch on possible observations and update belief for each branch
+    \item A valid conditional plan must handle every observation branch and terminate with only goal states
+\end{itemize}
+
+The resulting plan specifies actions conditional on observations. The agent needs to be able to update its belief state following observations in real time, which is often impractical.
+
+\section{Exploration}
+
+The prior algorithms are concerned with planning (offline search) before executive. In an unknown environment, however, we do not know the transition function and thus cannot plan. Our solution: \emph{online search}.
+
+\dfn[os]{Online search}{Online search explores the real world one actions at a time to learn the transition function.}
+
+This approach is useful for an unknown environment, real-time problems, and nondeterministic domains (conditional plans can become very large!). However, we must consider how safe it is to explore (ensure no irreverible actions) and the order in which we explore (explore close by nodes). This makes DFS with backtracking an efficient approach: store the current path (on a stack) to get back to untried actions when we run into a dead end. 
+
+\clearpage
+\section*{On Your Own}
+
+Reading this guide is a start, but to check your understanding, I recommend writing down definitions/purposes/examples for the below concepts. For algorithms, also identify the advantages, limitations, and assumptions behind completeness and optimality.
+
+\begin{multicols}{2}
+\small
+\begin{itemize}[nosep,leftmargin=*]
+    \item Agents, sensors, and actuators
+    \item Percepts and percept sequences
+    \item Agent function versus program
+    \item Rationality (and bounded rationality)
+    \item PEAS
+    \item Environment properties
+    \item Simple reflex agents
+    \item Model-based reflex agents
+    \item Goal-based agents
+    \item Utility-based agents
+    \item Learning agents
+    \item Environment versus internal state
+    \item Atomic and factored representations
+    \item State spaces and state space size estimation
+    \item Transition functions
+    \item Search problem
+    \item Step cost and path cost
+    \item Roots, edges, paths, and goals
+    \item Frontier and expansion
+    \item Cycles and redundant paths
+    \item Completeness and optimality
+    \item Time and space complexity
+    \item Branching factor and search depth
+    \item Breadth-first search (BFS)
+    \item Uniform-cost search
+    \item Depth-first search (DFS)
+    \item Iterative deepening (IDS)
+    \item Greedy best-first search
+    \item A* and weighted A*
+    \item Admissible heuristics
+    \item Local-search problem
+    \item Hill-climbing variants
+    \item Local versus global optima
+    \item Random-restart hill climbing
+    \item Simulated annealing
+    \item Cooling schedules
+    \item Genetic algorithms
+    \item Handling nondeterministic actions: AND-OR search
+    \item Handling sensorless problem: Belief states
+    \item Handling partial observability: Predict/update
+    \item Offline versus online search
+    \item Exploration and backtracking
+\end{itemize}
+\end{multicols}
+
+\end{document}

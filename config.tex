@@ -1,0 +1,48 @@
+%% ─── Document Configuration ────────────────────────────────────────────────
+%% Edit these values for each new document. title.tex reads them to build
+%% the cover page; \gitrepo overrides the default set in preamble.tex.
+%%
+%% HOW TO USE:
+%%   1. Copy this block into your main.tex, before \begin{document}
+%%   2. Fill in the fields below — all fields marked [REQUIRED] must be set
+%%   3. Fields marked [OPTIONAL] can be left empty {} or commented out
+%% ────────────────────────────────────────────────────────────────────────────
+
+%% ── Cover Page Gradient ──────────────────────────────────────────────────────
+%% The cover page background fades from covercolorone (top) to covercolortwo
+%% (bottom). Use any hex color code. Some nice pairs:
+%%   Ocean:   #1becff → #2E3192      Sunset:  #f7971e → #ffd200
+%%   Forest:  #134E5E → #71B280      Midnight:#232526 → #414345
+\definecolor{covercolorone}{HTML}{00B85C}   % [REQUIRED] top color of gradient
+\definecolor{covercolortwo}{HTML}{01110A}   % [REQUIRED] bottom color of gradient
+
+%% ── Accent Color ─────────────────────────────────────────────────────────────
+%% Drives the TOC entries, chapter title bars, and section rule lines.
+%% Should contrast well against white. Avoid very light colors.
+\definecolor{mytoccolor}{HTML}{093816}      % [REQUIRED] accent color
+
+%% ── Course / Document Info ───────────────────────────────────────────────────
+%% \coursetitle   : Full name of the course or document
+%%                  e.g. "Algebraic Topology", "Analytic Number Theory"
+%% \courseyear    : Semester, year, and institution shown under the title
+%%                  e.g. "Autumn 2025 · TIFR Mumbai"
+%% \instructor    : Name of the lecturer. Leave empty {} to hide.
+\newcommand{\coursetitle}{Artificial Intelligence Midterm Study Guide}                           % [REQUIRED]
+\newcommand{\courseyear}{Fall 2026}                        % [REQUIRED]
+\newcommand{\instructor}{Michael Hahsler}                                     % [OPTIONAL]
+
+%% ── Scribe / Author Info ─────────────────────────────────────────────────────
+%% \scribename         : Your full name as it appears on the cover
+%% \scribeemail        : Your email — rendered as a mailto: link
+%% \scriberwebsite     : Full URL of your site. Leave empty {} to hide.
+%% \scriberwebsitetext : Display text shown for the link above
+\newcommand{\scribename}{Alicia Maranville}                                              % [REQUIRED]
+%\newcommand{\scribeemail}{plato@academy.athens.gr}                           % [REQUIRED]
+%\newcommand{\scriberwebsite}{https://plato.academy.gr}                       % [OPTIONAL] leave {} to hide
+%\newcommand{\scriberwebsitetext}{plato.academy.gr}                           % [OPTIONAL] display text for above
+
+%% ── Git Footer ───────────────────────────────────────────────────────────────
+%% Shown in the footer of every page as a clickable link to your repository.
+%% Format: "username/repo-name"  e.g. "plato/examined-life-notes"
+%% Leave empty {} if you don't host your notes on GitHub.
+%\renewcommand{\gitrepo}{sohamch08/lumina}  % [OPTIONAL]
